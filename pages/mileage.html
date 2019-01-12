@@ -1,14 +1,10 @@
 <html>
   <head>
     <title>Mileage</title>
-    <script>"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"</script>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="/test.js"></script>
   </head>
   <body>
-    <script>
-$('#destinationForm').submit(function(e) {
-  return false;
-});
-    </script>
     <h1>Destinations</h1>
     <div id='destination'>
       <table id='destinationTable'>
@@ -17,11 +13,13 @@ $('#destinationForm').submit(function(e) {
       </table>
       <form method="post", id="destinationForm">
         Location name:
-        <input type="text" name="name">
+        <input type="text" name="name" id="destinationName">
         Location address:
-        <input type="text" name="address">
+        <input type="text" name="address" id="destinationAddress">
         <input type="submit" value="submit">
       </form>
+      <p id=updateStatus></p>
+      <button id="ajaxTest">ajax test</button>
     </div>
   </body>
 </html>

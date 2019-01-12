@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const uuid = require('uuid/v4');
 const session = require('express-session');
-const fileStore = require('session-file-store')(session);
+const MongoStore = require('connect-mongo')(session);
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt-nodejs');
@@ -19,6 +19,9 @@ passport.use(new localStrategy(
   { usernameField: 'username' },
   (username, password, done) => {
     const user = authModel.findOne({username}, (err, auth) => {
+      if(err || !auth) {
+        return done(null, false, {message: 'Invalid credentials'});
+      }
       if (username === auth.username && bcrypt.compareSync(password, auth.password)) {
         return done(null, auth);
       } else {
@@ -44,16 +47,22 @@ app.use(session({
   genid: (req) => {
     return uuid();
   },
-  store: new fileStore(),
+  store: new MongoStore({mongooseConnection: mongoose.connection}),
   secret: 'make this more secure',
   resave: false,
-  saveUninitialized: true,
-  cookie: {secure: true}
+  saveUninitialized: true
 }))
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
+  if(req.session.page_views) {
+    req.session.page_views++;
+    console.log('visited ' + req.session.page_views + ' times');
+  } else {
+    req.session.page_views = 1;
+    console.log('first time visitor');
+  }
   res.sendFile('pages/login.html', {root: __dirname});
 });
 
@@ -92,7 +101,7 @@ app.post('/signup', (req, res) => {
 
 app.post('/mileage/destination', (req, res) => {
   console.log(req.body);
-  res.status(201).send();
+  res.status(200).send('OK');
 });
 
 app.get('/authrequired', (req, res) => {
@@ -104,13 +113,24 @@ app.get('/authrequired', (req, res) => {
   }
 });
 
-app.get('/mileage', (req, res) => {
-  if(!req.isAuthenticated()) {
-    res.redirect('/');
-  }
-  res.sendFile('pages/mileage.html', {root: __dirname});
+app.get('/test.js', (req, res) => {
+  console.log('sent the file');
+  res.sendFile('pages/test.js', {root: __dirname});
 });
 
+app.get('/mileage', (req, res) => {
+  console.log("is authenticated? " + req.isAuthenticated());
+  if(!req.isAuthenticated()) {
+    res.redirect('/');
+  } else {
+    res.sendFile('pages/mileage.html', {root: __dirname});
+  }
+});
+
+app.get('/logout', (req, res) => {
+  res.send('Logged out successfully');
+  req.session.destroy();
+});
 app.listen(port, () => {
   console.log('App running');
 });

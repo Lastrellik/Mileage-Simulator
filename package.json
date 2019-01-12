@@ -12,6 +12,7 @@
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.18.3",
+    "connect-mongo": "^2.0.3",
     "express-session": "^1.15.6",
     "gulp": "^3.9.1",
     "gulp-cli": "^2.0.1",

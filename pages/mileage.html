@@ -5,22 +5,35 @@
     <script src="/test.js"></script>
   </head>
   <body>
-    <h1>Destinations</h1>
+    <h1>Locations</h1>
     <div id='destination'>
       <table id='destinationTable'>
-        <th>Name</th>
-        <th>Address</th>
+        <tr>
+          <th>Location Name</th>
+          <th>Address</th>
+          <th>Miles from home</th>
+          <th>Location Start Date</th>
+          <th>Location End Date</th>
+        </tr>
+        <tr>
+          <td><input type="text" name="name" id="destinationName"></td>
+          <td><input type="text" name="address" id="destinationAddress"></td>
+          <td><input type="number" name="milesFromHome" id="milesFromHome"></td>
+          <td><input type="date" name="destinationStartDate" id="destinationStartDate" value="2018-01-01"></td>
+          <td><input type="date" name="destinationEndDate" id="destinationEndDate" value="2018-12-31"></td>
+          <td><button id=addDestinationBtn>+</button></td>
+          <td><p id=updateStatus></p></td>
+        </tr>
       </table>
-      <form method="post", id="destinationForm">
-        Location name:
-        <input type="text" name="name" id="destinationName">
-        Location address:
-        <input type="text" name="address" id="destinationAddress">
-        <input type="submit" value="submit">
-      </form>
-      <p id=updateStatus></p>
       <button id="ajaxTest">ajax test</button>
     </div>
+    <h1>Travel Metadata</h1>
+    Mileage at beginning of year: 
+    <input type="number" id="startMileage" />
+    Mileage at end of year: 
+    <input type="number" id="endMileage" />
+    <button id=metadataSubmit>Submit/Update</button>
+    <p id='metadataStatus'></p>
   </body>
 </html>
 

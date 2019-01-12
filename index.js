@@ -8,6 +8,8 @@ const localStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcrypt-nodejs');
 
 const Auth = require('./models/authModel');
+const Destination = require('./models/destinationModel');
+const Metadata = require('./models/travelMetadataModel');
 const mongoose = require('mongoose');
 const db = mongoose.connect('mongodb://localhost/mileageProject', {useNewUrlParser: true});
 const authModel = mongoose.model('Auth', mongoose.schema);
@@ -100,17 +102,95 @@ app.post('/signup', (req, res) => {
 })
 
 app.post('/mileage/destination', (req, res) => {
-  console.log(req.body);
-  res.status(200).send('OK');
+  const query = {userId: req.user.id, name: req.body.name};
+  Destination.findOne(query, (err, dest) => {
+    if(!dest) {
+      req.body.userId = req.user.id;
+      const destination = new Destination(req.body);
+      destination.save();
+      res.status(200).send('OK');
+    } else {
+      console.log('already found one');
+      res.status(409).send('Data already in DB');
+    }
+  });
 });
 
-app.get('/authrequired', (req, res) => {
-  if(req.isAuthenticated()) {
-    res.send('you hit the authentication endpoint');
-    console.log(req.session);
-  } else {
-    res.redirect('/');
-  }
+app.delete('/mileage/destination', (req, res) => {
+  const query = {userId: req.user.id, name: req.body.name};
+  Destination.deleteOne(query, (err) => {
+    if(err) {
+      console.log(err);
+      res.status(204).send('Element already deleted');
+    } else {
+      console.log('Row removed from DB');
+      res.status(200).send('OK');
+    }
+  })
+});
+
+app.get('/mileage/destination', (req, res) => {
+  const query = {userId: req.user.id};
+  Destination.find(query, (err, destinations) => {
+    if (err) {
+      console.log(err);
+    }
+    res.send(destinations);
+  })
+});
+
+app.post('/mileage/metadata', (req, res) => {
+  const query = {userId: req.user.id};
+  req.body.userId = req.user.id;
+  Metadata.findOne(query, (err, data) => {
+    if(data) {
+      data.startMileage = req.body.startMileage;
+      data.endMileage = req.body.endMileage;
+      Metadata.updateOne(query, data, err => {
+        if(err) {
+          console.log('Error in saving metadata');
+          console.log(err);
+        } else {
+          console.log('updated metadata');
+          res.status(200).send('OK');
+        }
+      });
+    } else {
+      const data = new Metadata(req.body);
+      data.save( err => {
+        if(err) {
+          console.log(err);
+        } else {
+          console.log('saved new data');
+          res.status(200).send('OK');
+        }
+      });
+    }
+  })
+});
+
+app.get('/mileage/metadata', (req, res) => {
+  const query = {userId: req.user.id};
+  Metadata.findOne(query, (err, data) => {
+    if(err) {
+      console.log('error getting metadata');
+      res.status(404).send('Not found in DB');
+    } else {
+      res.status(200).send(data);
+    }
+  })
+});
+
+app.delete('/mileage/metadata', (req, res) => {
+  const query = {userId: req.user.id};
+  Metadata.deleteMany(query, (err, data) => {
+    if(err) {
+      console.log('error deleting metadata');
+      res.status(404).send('Not found in DB');
+    } else {
+      res.status(200).send(data);
+    }
+  })
 });
 
 app.get('/test.js', (req, res) => {
@@ -119,7 +199,6 @@ app.get('/test.js', (req, res) => {
 });
 
 app.get('/mileage', (req, res) => {
-  console.log("is authenticated? " + req.isAuthenticated());
   if(!req.isAuthenticated()) {
     res.redirect('/');
   } else {

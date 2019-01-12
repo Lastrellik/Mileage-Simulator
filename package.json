@@ -1,0 +1,26 @@
+{
+  "name": "Mileage-Simulator",
+  "version": "1.0.0",
+  "description": "App for simulating mileage for work",
+  "main": "index.js",
+  "repository": "https://github.com/Lastrellik/Mileage-Simulator.git",
+  "author": "Jason Bruderer <lastrellik@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "express": "^4.16.4"
+  },
+  "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
+    "body-parser": "^1.18.3",
+    "express-session": "^1.15.6",
+    "gulp": "^3.9.1",
+    "gulp-cli": "^2.0.1",
+    "gulp-nodemon": "^2.4.2",
+    "mongoose": "^5.4.3",
+    "nodemon": "^1.18.9",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "session-file-store": "^1.2.0",
+    "uuid": "^3.3.2"
+  }
+}

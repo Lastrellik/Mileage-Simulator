@@ -2,18 +2,6 @@
 $(document).ready(() => {
   populateDestinationRows();
   populateMetadata();
-  $('#ajaxTest').click(() => {
-    $.ajax({
-      url: '/mileage/metadata',
-      type: 'delete',
-      success: () => {
-        console.log('successfully deleted data');
-      },
-      error: () => {
-        console.log('error deleting data');
-      }
-    })
-  });
   $('#addDestinationBtn').click(() => {
     const destination = {
       name: $('#destinationName').val(),
@@ -30,7 +18,6 @@ $(document).ready(() => {
         addDestinationRow(destination);
       },
       error: () => {
-        console.log('error');
         $('#updateStatus').text('There was an isssue');
       },
       data: JSON.stringify(destination)
@@ -41,17 +28,14 @@ $(document).ready(() => {
       startMileage: $('#startMileage').val(),
       endMileage: $('#endMileage').val()
     }
-    console.log(mileageMetadata);
     $.ajax({
       url: '/mileage/metadata',
       type: 'post',
       contentType: 'application/json',
       success: () => {
-        console.log('success');
         $('#metadataStatus').text('success');
       },
       error: () => {
-        console.log('failure');
         $('#metadataStatus').text('There was an isssue');
       },
       data: JSON.stringify(mileageMetadata)
@@ -67,7 +51,7 @@ const populateDestinationRows = () => {
       data.forEach(row => addDestinationRow(row));
     },
     error: () => {
-      console.log('population thing failed');
+      $('#updateStatus').text('Error with populating rows');
     }
   });
 }
@@ -77,12 +61,13 @@ const populateMetadata = () => {
     url: '/mileage/metadata',
     type: 'GET',
     success: (data) => {
-      $('#startMileage').val(data.startMileage);
-      $('#endMileage').val(data.endMileage);
-      console.log(data);
+      if(data) {
+        $('#startMileage').val(data.startMileage);
+        $('#endMileage').val(data.endMileage);
+      }
     },
     error: () => {
-      console.log('Error calling metadata');
+      $('#metadataStatus').text('Error calling metadata');
     }
   });
 }

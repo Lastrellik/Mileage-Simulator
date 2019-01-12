@@ -190,11 +190,10 @@ app.delete('/mileage/metadata', (req, res) => {
     } else {
       res.status(200).send(data);
     }
-  })
+  });
 });
 
 app.get('/test.js', (req, res) => {
-  console.log('sent the file');
   res.sendFile('pages/test.js', {root: __dirname});
 });
 

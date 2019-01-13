@@ -102,6 +102,10 @@ app.post('/signup', (req, res) => {
 })
 
 app.post('/mileage/destination', (req, res) => {
+  if(!req.isAuthenticated()) {
+    res.redirect('/');
+    return;
+  }
   const query = {userId: req.user.id, name: req.body.name};
   Destination.findOne(query, (err, dest) => {
     if(!dest) {
@@ -117,6 +121,10 @@ app.post('/mileage/destination', (req, res) => {
 });
 
 app.delete('/mileage/destination', (req, res) => {
+  if(!req.isAuthenticated()) {
+    res.redirect('/');
+    return;
+  }
   const query = {userId: req.user.id, name: req.body.name};
   Destination.deleteOne(query, (err) => {
     if(err) {
@@ -130,6 +138,10 @@ app.delete('/mileage/destination', (req, res) => {
 });
 
 app.get('/mileage/destination', (req, res) => {
+  if(!req.isAuthenticated()) {
+    res.redirect('/');
+    return;
+  }
   const query = {userId: req.user.id};
   Destination.find(query, (err, destinations) => {
     if (err) {
@@ -140,6 +152,10 @@ app.get('/mileage/destination', (req, res) => {
 });
 
 app.post('/mileage/metadata', (req, res) => {
+  if(!req.isAuthenticated()) {
+    res.redirect('/');
+    return;
+  }
   const query = {userId: req.user.id};
   req.body.userId = req.user.id;
   Metadata.findOne(query, (err, data) => {
@@ -170,6 +186,10 @@ app.post('/mileage/metadata', (req, res) => {
 });
 
 app.get('/mileage/metadata', (req, res) => {
+  if(!req.isAuthenticated()) {
+    res.redirect('/');
+    return;
+  }
   const query = {userId: req.user.id};
   Metadata.findOne(query, (err, data) => {
     if(err) {
@@ -182,6 +202,10 @@ app.get('/mileage/metadata', (req, res) => {
 });
 
 app.delete('/mileage/metadata', (req, res) => {
+  if(!req.isAuthenticated()) {
+    res.redirect('/');
+    return;
+  }
   const query = {userId: req.user.id};
   Metadata.deleteMany(query, (err, data) => {
     if(err) {
@@ -193,8 +217,12 @@ app.delete('/mileage/metadata', (req, res) => {
   });
 });
 
-app.get('/test.js', (req, res) => {
-  res.sendFile('pages/test.js', {root: __dirname});
+app.get('/mileage.js', (req, res) => {
+  if(!req.isAuthenticated()) {
+    res.redirect('/');
+    return;
+  }
+  res.sendFile('pages/mileage.js', {root: __dirname});
 });
 
 app.get('/mileage', (req, res) => {
@@ -209,6 +237,7 @@ app.get('/logout', (req, res) => {
   res.send('Logged out successfully');
   req.session.destroy();
 });
+
 app.listen(port, () => {
   console.log('App running');
 });

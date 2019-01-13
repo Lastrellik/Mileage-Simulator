@@ -56,19 +56,38 @@ const populateDestinationRows = () => {
   });
 }
 
-const populateMetadata = () => {
+const getDestinations = (callback) => {
+  $.ajax({
+    url: '/mileage/destination',
+    type: 'GET',
+    success: (data) => {
+      callback(data);
+    },
+    error: () => {
+      console.log('could not get destination data');
+    }
+  });
+}
+
+const getMetadata = (callback) => {
   $.ajax({
     url: '/mileage/metadata',
     type: 'GET',
     success: (data) => {
       if(data) {
-        $('#startMileage').val(data.startMileage);
-        $('#endMileage').val(data.endMileage);
+        callback(data);
       }
     },
     error: () => {
       $('#metadataStatus').text('Error calling metadata');
     }
+  });
+}
+
+const populateMetadata = () => {
+  getMetadata((data) => {
+    $('#startMileage').val(data.startMileage);
+    $('#endMileage').val(data.endMileage);
   });
 }
 
@@ -96,3 +115,54 @@ const addDestinationRow = (destination) => {
   $('#updateStatus').text('success');
 }
 
+const runSimulation = () => {
+  const metadata = {};
+  const days = ['Date,Destination,Starting Mileage,Ending Milgeage,Trip Mileage,Work Related\n'];
+  getMetadata((data) => {
+    metadata.startMileage = data.startMileage;
+    metadata.endMileage = data.endMileage;
+  });
+  getDestinations((data)=> {
+    const destinations = [];
+    let runningMileage = metadata.startMileage;
+    data.forEach(dest => destinations.push(dest));
+    for(let d = new Date(2018, 0, 1); d < new Date(2018, 11, 31); d.setDate(d.getDate() + 1)) {
+      if(Math.floor(Math.random() * 100) > 80) {
+        continue;
+      }
+      const day = d.getDate();
+      const months = d.getMonth() + 1;
+      const year = d.getFullYear();
+      const randNum = Math.floor(Math.random() * destinations.length);
+      const destination = destinations[randNum];
+      const date = months + '-' + day + '-' + year;
+      const destinationName = destination.name;
+      const startingMileage = runningMileage;
+      const tripMileage = destination.milesFromHome;
+      const endMileage = startingMileage + tripMileage;
+      const workRelated = "Business";
+      const newRow = [date, destinationName, startingMileage, endMileage, tripMileage, workRelated].join(',');
+      days.push(newRow + '\n');
+      const homeTrip = [date, "Home", endMileage, endMileage + tripMileage, tripMileage, "travel home"].join(',');
+      runningMileage += (tripMileage * 2);
+      days.push(homeTrip + '\n');
+    }
+    displaySimulationData(days);
+    downloadFile(days);
+  });
+}
+
+const displaySimulationData = (simulationDays) => {
+  $('#displayTable').empty();
+  $('#displayTable').append('<tr><th>' + simulationDays[0].split(',').join('</th><th>') + '</th></tr>');
+  for(let i = 1; i < simulationDays.length; i++) {
+    $('#displayTable').append('<tr><td>' + simulationDays[i].split(',').join('</td><td>') + '</th></tr>');
+  }
+}
+
+const downloadFile = simulationDays => {
+  const planTextData = simulationDays.join('');
+  $('#downloadFile').text('Download CSV');
+  $('#downloadFile').attr('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(planTextData));
+  $('#downloadFile').attr('download', 'mileageData.csv');
+}

@@ -2,7 +2,7 @@
   <head>
     <title>Mileage</title>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-    <script src="/test.js"></script>
+    <script src="/mileage.js"></script>
   </head>
   <body>
     <h1>Locations</h1>
@@ -34,6 +34,12 @@
       <input type="number" id="endMileage" />
       <button id=metadataSubmit>Submit/Update</button>
       <p id='metadataStatus'></p>
+    </div>
+    <button onClick='runSimulation()'>Run</button>
+    <a id='downloadFile'></a>
+    <div>
+      <table id='displayTable'>
+      </table>
     </div>
   </body>
 </html>

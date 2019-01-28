@@ -124,31 +124,40 @@ const runSimulation = () => {
   });
   getDestinations((data)=> {
     const destinations = [];
+    const randomTripMileageVariation = .15;
     let runningMileage = metadata.startMileage;
     data.forEach(dest => destinations.push(dest));
+    let milesDrivinThisYear = 0;
     for(let d = new Date(2018, 0, 1); d < new Date(2018, 11, 31); d.setDate(d.getDate() + 1)) {
       if(Math.floor(Math.random() * 100) > 80) {
         continue;
       }
-      const day = d.getDate();
-      const months = d.getMonth() + 1;
-      const year = d.getFullYear();
-      const randNum = Math.floor(Math.random() * destinations.length);
-      const destination = destinations[randNum];
-      const date = months + '-' + day + '-' + year;
-      const destinationName = destination.name;
-      const startingMileage = runningMileage;
-      const tripMileage = destination.milesFromHome;
-      const endMileage = startingMileage + tripMileage;
-      const workRelated = "Business";
-      const newRow = [date, destinationName, startingMileage, endMileage, tripMileage, workRelated].join(',');
-      days.push(newRow + '\n');
-      const homeTrip = [date, "Home", endMileage, endMileage + tripMileage, tripMileage, "travel home"].join(',');
-      runningMileage += (tripMileage * 2);
-      days.push(homeTrip + '\n');
+      for(let i = 0; i < 1 + Math.floor(Math.random() * 2); i++) {
+        const day = d.getDate();
+        const months = d.getMonth() + 1;
+        const year = d.getFullYear();
+        const randNum = Math.floor(Math.random() * destinations.length);
+        const destination = destinations[randNum];
+        const date = months + '-' + day + '-' + year;
+        const destinationName = destination.name;
+        const startingMileage = runningMileage;
+        const tripMileage = Math.round(destination.milesFromHome * ((Math.random() * randomTripMileageVariation) + 1));
+        const homeTripMileage = Math.round(destination.milesFromHome * ((Math.random() * randomTripMileageVariation) + 1));
+        const endMileage = startingMileage + tripMileage;
+        const workRelated = "Business";
+        const newRow = [date, destinationName, startingMileage, endMileage, tripMileage, workRelated].join(',');
+        days.push(newRow + '\n');
+        const homeTrip = [date, "Home", endMileage, endMileage + homeTripMileage, homeTripMileage, "travel home"].join(',');
+        runningMileage += tripMileage;
+        runningMileage += homeTripMileage;
+        milesDrivinThisYear += (tripMileage * 2);
+        days.push(homeTrip + '\n');
+      }
     }
     displaySimulationData(days);
     downloadFile(days);
+    displayEndMiles(runningMileage);
+    displayTotalMilesDrivin(milesDrivinThisYear);
   });
 }
 
@@ -165,4 +174,12 @@ const downloadFile = simulationDays => {
   $('#downloadFile').text('Download CSV');
   $('#downloadFile').attr('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(planTextData));
   $('#downloadFile').attr('download', 'mileageData.csv');
+}
+
+const displayEndMiles = endMiles => {
+  $('#endingActualMiles').text('Final car mileage: ' + endMiles);
+}
+
+const displayTotalMilesDrivin = totalMilesDriven => {
+  $('#totalMilesDriven').text('Simulated miles driven: ' + totalMilesDriven);
 }

@@ -65,10 +65,12 @@ app.get('/', (req, res) => {
     req.session.page_views = 1;
     console.log('first time visitor');
   }
+  console.log('user joined / page');
   res.sendFile('pages/login.html', {root: __dirname});
 });
 
 app.post('/login', (req, res) => {
+  console.log('user called login post');
   passport.authenticate('local', (err, user, info) => {
     if (info) return res.send(info.message);
     if (err) return next(err);
@@ -81,10 +83,12 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/signup', (req, res) => {
+  console.log('user called signup get');
   res.sendFile('pages/signup.html', {root: __dirname});
 });
 
 app.post('/signup', (req, res) => {
+  console.log('user called signup post');
   const username = req.body.username;
   const password = req.body.password;
   const hash = bcrypt.hashSync(password);
@@ -102,6 +106,7 @@ app.post('/signup', (req, res) => {
 })
 
 app.post('/mileage/destination', (req, res) => {
+  console.log('user called mileage/destination post');
   if(!req.isAuthenticated()) {
     res.redirect('/');
     return;
@@ -121,6 +126,7 @@ app.post('/mileage/destination', (req, res) => {
 });
 
 app.delete('/mileage/destination', (req, res) => {
+  console.log('user called mileage/destination delete');
   if(!req.isAuthenticated()) {
     res.redirect('/');
     return;
@@ -138,6 +144,7 @@ app.delete('/mileage/destination', (req, res) => {
 });
 
 app.get('/mileage/destination', (req, res) => {
+  console.log('user called mileage/destination get');
   if(!req.isAuthenticated()) {
     res.redirect('/');
     return;
@@ -152,6 +159,7 @@ app.get('/mileage/destination', (req, res) => {
 });
 
 app.post('/mileage/metadata', (req, res) => {
+  console.log('user called mileage/metadata post');
   if(!req.isAuthenticated()) {
     res.redirect('/');
     return;
@@ -186,6 +194,7 @@ app.post('/mileage/metadata', (req, res) => {
 });
 
 app.get('/mileage/metadata', (req, res) => {
+  console.log('user called mileage/metadata get');
   if(!req.isAuthenticated()) {
     res.redirect('/');
     return;
@@ -202,6 +211,7 @@ app.get('/mileage/metadata', (req, res) => {
 });
 
 app.delete('/mileage/metadata', (req, res) => {
+  console.log('user called mileage/metadata delete');
   if(!req.isAuthenticated()) {
     res.redirect('/');
     return;
@@ -226,6 +236,7 @@ app.get('/mileage.js', (req, res) => {
 });
 
 app.get('/mileage', (req, res) => {
+  console.log('user called mileage html page');
   if(!req.isAuthenticated()) {
     res.redirect('/');
   } else {
@@ -234,6 +245,7 @@ app.get('/mileage', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
+  console.log('user logged out');
   res.send('Logged out successfully');
   req.session.destroy();
 });

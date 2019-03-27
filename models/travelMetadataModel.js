@@ -11,6 +11,15 @@ var travelMetadataModel = new Schema({
   },
   endMileage: {
     type: Number
+  },
+  lowerBoundTripsPerDay: {
+    type: Number
+  },
+  upperBoundTripsPerDay: {
+    type: Number
+  },
+  percentageIllWork: {
+    type: Number
   }
 });
 

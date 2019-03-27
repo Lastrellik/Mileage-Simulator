@@ -26,7 +26,10 @@ $(document).ready(() => {
   $('#metadataSubmit').click(() => {
     const mileageMetadata = {
       startMileage: $('#startMileage').val(),
-      endMileage: $('#endMileage').val()
+      endMileage: $('#endMileage').val(),
+      lowerBoundTripsPerDay: $('#lowerBoundTripsPerDay').val(),
+      upperBoundTripsPerDay: $('#upperBoundTripsPerDay').val(),
+      percentageIllWork: $('#percentageIllWork').val()
     }
     $.ajax({
       url: '/mileage/metadata',
@@ -88,6 +91,9 @@ const populateMetadata = () => {
   getMetadata((data) => {
     $('#startMileage').val(data.startMileage);
     $('#endMileage').val(data.endMileage);
+    $('#lowerBoundTripsPerDay').val(data.lowerBoundTripsPerDay);
+    $('#upperBoundTripsPerDay').val(data.upperBoundTripsPerDay);
+    $('#percentageIllWork').val(data.percentageIllWork);
   });
 }
 
@@ -121,6 +127,9 @@ const runSimulation = () => {
   getMetadata((data) => {
     metadata.startMileage = data.startMileage;
     metadata.endMileage = data.endMileage;
+    metadata.lowerBoundTripsPerDay = data.lowerBoundTripsPerDay;
+    metadata.upperBoundTripsPerDay = data.upperBoundTripsPerDay;
+    metadata.percentageIllWork = data.percentageIllWork;
   });
   getDestinations((data)=> {
     const destinations = [];

@@ -170,6 +170,9 @@ app.post('/mileage/metadata', (req, res) => {
     if(data) {
       data.startMileage = req.body.startMileage;
       data.endMileage = req.body.endMileage;
+      data.lowerBoundTripsPerDay = req.body.lowerBoundTripsPerDay;
+      data.upperBoundTripsPerDay = req.body.upperBoundTripsPerDay;
+      data.percentageIllWork = req.body.percentageIllWork;
       Metadata.updateOne(query, data, err => {
         if(err) {
           console.log('Error in saving metadata');
